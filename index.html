@@ -270,20 +270,32 @@
                 const rows = data.table.rows;
                 container.innerHTML = '';
 
-                // قراءة البيانات بدءاً من الصف الثاني لتخطي العناوين
+                // البحث عن مواقع الأعمدة بناءً على الصف الأول
+                let idxName = 1, idxCategory = 3, idxDesc = 5, idxImg = 7;
+
+                if (rows.length > 0 && rows[0].c) {
+                    rows[0].c.forEach((header, index) => {
+                        if (!header || !header.v) return;
+                        const val = header.v.toString().trim();
+                        if (val === 'name_ar') idxName = index;
+                        if (val === 'category_ar') idxCategory = index;
+                        if (val === 'description_ar') idxDesc = index;
+                        if (val === 'imgSrc') idxImg = index;
+                    });
+                }
+
+                // جلب المنتجات بدءاً من الصف الثاني
                 for (let i = 1; i < rows.length; i++) {
                     const row = rows[i].c;
                     if (!row) continue;
 
-                    // استخراج البيانات بناءً على ترتيب الأعمدة بالشيت (B, D, F, H)
-                    const name = row[1] ? row[1].v : '';           // Column B: name_ar
-                    const category = row[3] ? row[3].v : '';       // Column D: category_ar
-                    const description = row[5] ? row[5].v : '';    // Column F: description_ar
+                    const name = row[idxName] ? row[idxName].v : '';
+                    const category = row[idxCategory] ? row[idxCategory].v : '';
+                    const description = row[idxDesc] ? row[idxDesc].v : '';
                     
-                    // Column H: imgSrc وإزالة أي أقواس زائدة تلقائياً
-                    let imageUrl = row[7] ? row[7].v : '';
+                    let imageUrl = row[idxImg] ? row[idxImg].v : '';
                     if (imageUrl) {
-                        imageUrl = imageUrl.replace(/^\[|\]$/g, '').trim();
+                        imageUrl = imageUrl.toString().replace(/^\[|\]$/g, '').trim();
                     } else {
                         imageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
                     }
@@ -313,7 +325,6 @@
                 container.innerHTML = `
                     <div style="grid-column: 1/-1; text-align:center; color: #ef4444;">
                         <p>عذراً، تعذر تحميل المنتجات حالياً.</p>
-                        <small>تأكد من اختيار (Anyone with the link) في خيارات مشاركة شيت جوجل.</small>
                     </div>
                 `;
             }
@@ -322,4 +333,293 @@
         document.addEventListener('DOMContentLoaded', fetchProducts);
     </script>
 </body>
-</html>
+</html>        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(17, 94, 89, 0.85), rgba(17, 94, 89, 0.85)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #b45309;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 40px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-category {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        .product-desc {
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+            grid-column: 1 / -1;
+            padding: 40px;
+        }
+
+        footer {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-paper-plane"></i>
+                    الأجنحة الذهبية
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#products">المنتجات</a></li>
+                    <li><a href="#contact">تواصل معنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>شركة الأجنحة الذهبية للاستيراد والتصدير</h1>
+            <p>تصدير أجود المنتجات الغذائية والفواكه والخضروات المجمدة (IQF) لكافة أنحاء العالم</p>
+            <a href="#products" class="btn btn-primary">تصفح المنتجات</a>
+        </div>
+    </section>
+
+    <section class="section container" id="products">
+        <h2 class="section-title">منتجاتنا المتاحة للتصدير</h2>
+        <div class="products-grid" id="products-container">
+            <div class="loading">جاري جلب المنتجات من الشيت... <i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>جميع الحقوق محفوظة &copy; 2026 شركة الأجنحة الذهبية للاستيراد والتصدير</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/201007727700" target="_blank" class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script>
+    const SHEET_ID = '1eSEd8yagcSb28-87TFo9MHQvXc4csLbIHgHe78DAwHk';
+    const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    async function fetchProducts() {
+        const container = document.getElementById('products-container');
+        if (!container) return;
+
+        try {
+            const response = await fetch(SHEET_URL);
+            const text = await response.text();
+            
+            const jsonText = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonText);
+            
+            const cols = data.table.cols;
+            const rows = data.table.rows;
+            container.innerHTML = '';
+
+            // معرفة مؤشر كل عمود بناءً على تسميته في الصف الأول
+            let idxName = -1, idxCategory = -1, idxDesc = -1, idxImg = -1;
+
+            // قراءة عناوين الأعمدة من أصل البيانات أو الصف الأول
+            const headers = rows[0].c;
+            headers.forEach((header, index) => {
+                if (!header || !header.v) return;
+                const val = header.v.toString().trim();
+                if (val === 'name_ar') idxName = index;
+                if (val === 'category_ar') idxCategory = index;
+                if (val === 'description_ar') idxDesc = index;
+                if (val === 'imgSrc') idxImg = index;
+            });
+
+            // إذا لم يتم العثور على العناوين، نستخدم الترتيب الافتراضي (B, D, F, H)
+            if (idxName === -1) idxName = 1;
+            if (idxCategory === -1) idxCategory = 3;
+            if (idxDesc === -1) idxDesc = 5;
+            if (idxImg === -1) idxImg = 7;
+
+            // التكرار على الصفوف بدءاً من الصف الثاني لتخطي العناوين
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i].c;
+                if (!row) continue;
+
+                const name = row[idxName] ? row[idxName].v : '';
+                const category = row[idxCategory] ? row[idxCategory].v : '';
+                const description = row[idxDesc] ? row[idxDesc].v : '';
+                
+                let imageUrl = row[idxImg] ? row[idxImg].v : '';
+                if (imageUrl) {
+                    imageUrl = imageUrl.toString().replace(/^\[|\]$/g, '').trim();
+                } else {
+                    imageUrl = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80';
+                }
+
+                if (!name && !description) continue;
+
+                const card = `
+                    <div class="product-card">
+                        <img src="${imageUrl}" alt="${name}" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'">
+                        <div class="product-info">
+                            <span class="product-category">${category}</span>
+                            <h3 class="product-title">${name}</h3>
+                            <p class="product-desc">${description}</p>
+                            <a href="https://wa.me/201007727700?text=استفسار عن طلب: ${encodeURIComponent(name)}" target="_blank" class="btn btn-primary" style="display:block; text-align:center;">طلب عرض سعر</a>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            }
+
+            if (container.innerHTML.trim() === '') {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">لا توجد منتجات مضافة حالياً.</p>';
+            }
+
+        } catch (error) {
+            console.error('خطأ في جلب البيانات:', error);
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; color: #ef4444;">
+                    <p>عذراً، تعذر تحميل المنتجات حالياً.</p>
+                </div>
+            `;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchProducts);
+</script>
